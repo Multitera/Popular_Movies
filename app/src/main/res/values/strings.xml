@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Settings</string>
+    <string name="themoviedb_url">http://api.themoviedb.org</string>
+    <string name="sort_popularity">popularity.desc</string>
+    <string name="sort_rating">vote_average.desc</string>
+    <string name="poster_url">http://image.tmdb.org/t/p/w500/</string>
+    <string name="title_activity_details">DetailsActivity</string>
+    <string name="search_by">Search by</string>
+    <string name="popularity">Popularity</string>
+    <string name="rating">Rating</string>
+    <string name="favorite_button">Mark as Favorite</string>
+    <string name="poster_description">movie poster image</string>
+    <string name="shared_poster_image">sharedPosterImage</string>
+</resources>

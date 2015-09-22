@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="android:style/Theme.Holo.Light.DarkActionBar">
+        <!-- enable window content transitions.  This defaults to true for Material-themed applications -->
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    </style>
+
+    <style name="MovieDetailTheme" parent="AppTheme">
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@transition/enter_movie_details</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/image_transition</item>
+    </style>
+</resources>
