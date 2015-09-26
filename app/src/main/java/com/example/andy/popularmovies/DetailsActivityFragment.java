@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.andy.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -47,6 +48,12 @@ public class DetailsActivityFragment extends Fragment {
         mPoster = (ImageView) rootView.findViewById(R.id.posterImage);
         Picasso.with(getActivity()).load(getActivity().getString(R.string.poster_url) + movie.getPoster_path()).into(mPoster);
         mFavorite = (Button) rootView.findViewById(R.id.favoriteButton);
+        mFavorite.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                //Will actually do something later
+                Toast.makeText(getActivity(), "Pointless button", Toast.LENGTH_SHORT).show();
+            }
+        });
         return rootView;
     }
 }

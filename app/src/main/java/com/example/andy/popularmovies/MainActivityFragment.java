@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class MainActivityFragment extends Fragment implements Callback<Results> 
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
+        View emptyView = view.findViewById(R.id.empty_grid);
+        gridView.setEmptyView(emptyView);
         gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -95,7 +98,8 @@ public class MainActivityFragment extends Fragment implements Callback<Results> 
 
     @Override
     public void failure(RetrofitError error) {
-        Toast.makeText(this.getActivity(), "error", Toast.LENGTH_SHORT).show();
+        Log.e(MainActivityFragment.class.getSimpleName(), error.getMessage());
+        Toast.makeText(this.getActivity(), R.string.failed_retrofit, Toast.LENGTH_SHORT).show();
     }
 
     @Override

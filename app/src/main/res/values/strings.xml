@@ -12,4 +12,6 @@
     <string name="favorite_button">Mark as Favorite</string>
     <string name="poster_description">movie poster image</string>
     <string name="shared_poster_image">sharedPosterImage</string>
+    <string name="no_movies">Movie Information Not Available</string>
+    <string name="failed_retrofit">Failed to get movie information</string>
 </resources>
