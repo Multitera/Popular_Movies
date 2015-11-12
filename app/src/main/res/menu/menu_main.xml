@@ -8,6 +8,8 @@
                 android:title="@string/popularity" />
             <item android:id="@+id/rating"
                 android:title="@string/rating" />
+            <item android:id="@+id/favorites"
+                android:title="@string/sort_favorites" />
         </menu>
     </item>
 </menu>

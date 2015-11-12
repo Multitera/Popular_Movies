@@ -23,6 +23,8 @@
             android:label="@string/title_activity_details"
             android:theme="@style/MovieDetailTheme">
         </activity>
+        <provider android:authorities="movieProviderAuthorities"
+            android:name=".MovieProvider" />
     </application>
 
 </manifest>

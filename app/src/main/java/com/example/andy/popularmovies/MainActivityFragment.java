@@ -2,7 +2,12 @@ package com.example.andy.popularmovies;
 
 import android.app.ActivityOptions;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -31,10 +36,11 @@ import retrofit.client.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements Callback<Results> {
+public class MainActivityFragment extends Fragment implements Callback<Results>, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String SEARCH_TYPE_KEY = "searchType";
     private static final String MOVIE_KEY = "movie";
+    private static final int LOADER = 0;
     private List<Movie> movies;
     private GridView gridView;
     private int searchType = -1;
@@ -80,7 +86,10 @@ public class MainActivityFragment extends Fragment implements Callback<Results> 
     public void queryMoviePosters(int searchType) {
         if (searchType != this.searchType) {
             this.searchType = searchType;
-            MovieResultsServiceHelper.queryResults(getActivity(), getString(searchType), this);
+            if (searchType == R.string.sort_favorites) {
+                getLoaderManager().initLoader(LOADER, null, this);
+            } else
+                MovieResultsServiceHelper.queryResults(getActivity(), getString(searchType), this);
         }
     }
 
@@ -108,5 +117,56 @@ public class MainActivityFragment extends Fragment implements Callback<Results> 
         outState.putInt(SEARCH_TYPE_KEY, searchType);
         Parcelable parcelable = Parcels.wrap(movies);
         outState.putParcelable(MOVIE_KEY, parcelable);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        switch (i) {
+            case LOADER:
+                return new CursorLoader(getActivity(), Uri.parse(getString(R.string.provider_uri)), null, null, null, null);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        this.movies.clear();
+        if (cursor != null) {
+            try {
+                while (cursor.moveToNext()) {
+                    Boolean isAdult = cursor.getLong(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_ADULT)) == 1;
+                    String backdrop = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_BACKDROP));
+                    String genreString = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_GENRE));
+                    String[] genreArray = genreString.replaceAll("[\\p{z}\\s]+", "").split(", ");
+                    int[] genreIds = new int[genreArray.length];
+                    for (int i = 0; i < genreArray.length; i++)
+                        genreIds[i] = Integer.parseInt(genreArray[i]);
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema._ID));
+                    String original_language = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_LANGUAGE));
+                    String original_title = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_ORIGINAL_TITLE));
+                    String overview = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_OVERVIEW));
+                    String release_date = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_DATE));
+                    String poster_path = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_POSTER));
+                    double popularity = cursor.getDouble(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_POPULARITY));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_TITLE));
+                    boolean video = cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_VIDEO)) == 1;
+                    double vote_average = cursor.getDouble(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_VOTE_AVG));
+                    int vote_count = cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_VOTE_COUNT));
+                    movies.add(new Movie(isAdult, backdrop, genreIds, id, original_language, original_title, overview, release_date, poster_path, popularity, title, video, vote_average, vote_count));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (movies.isEmpty()) {
+
+        } else
+            displayMoviePosters();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

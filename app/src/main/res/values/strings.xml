@@ -4,14 +4,17 @@
     <string name="themoviedb_url">http://api.themoviedb.org</string>
     <string name="sort_popularity">popularity.desc</string>
     <string name="sort_rating">vote_average.desc</string>
+    <string name="sort_favorites">Favorites</string>
     <string name="poster_url">http://image.tmdb.org/t/p/w500/</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="search_by">Search by</string>
     <string name="popularity">Popularity</string>
     <string name="rating">Rating</string>
-    <string name="favorite_button">Mark as Favorite</string>
+    <string name="favorite_button">Favorite</string>
+    <string name="unfavorite_button">Unfavorite</string>
     <string name="poster_description">movie poster image</string>
     <string name="shared_poster_image">sharedPosterImage</string>
     <string name="no_movies">Movie Information Not Available</string>
     <string name="failed_retrofit">Failed to get movie information</string>
+    <string name="provider_uri">com.example.andy.popularmovies.movieprovider</string>
 </resources>

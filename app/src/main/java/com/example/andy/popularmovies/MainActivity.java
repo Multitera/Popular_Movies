@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.rating:
                 changeSearchType(R.string.sort_rating);
                 return true;
+            case R.id.favorites:
+                changeSearchType(R.string.sort_favorites);
+                return true;
             case R.id.action_settings:
                 return true;
             default:
