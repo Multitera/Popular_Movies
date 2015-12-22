@@ -23,6 +23,8 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.util.Arrays;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -69,7 +71,12 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         switch (i) {
             case LOADER:
-                return new CursorLoader(getActivity(), Uri.parse(getString(R.string.provider_uri)), new String[]{MovieSchema._ID}, null, null, null);
+                return new CursorLoader(getActivity(),
+                        Uri.parse("content://" + getString(R.string.provider_authority) + "/"+ MovieSchema.TABLE_NAME),
+                        new String[]{MovieSchema.COLUMN_NAME_MOVIE_ID},
+                        MovieSchema.COLUMN_NAME_MOVIE_ID + "=?",
+                        new String[]{String.valueOf(movie.getId())},
+                        null);
             default:
                 return null;
         }
@@ -80,12 +87,8 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
         boolean isFavorite = false;
         if (cursor != null) {
             try {
-                while (cursor.moveToNext()) {
-                    if (movie.getId() == cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema._ID))) {
-                        isFavorite = true;
-                        break;
-                    }
-                }
+                if (cursor.getCount() != 0)
+                isFavorite = true;
             } finally {
                 cursor.close();
             }
@@ -96,7 +99,7 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
                 public void onClick(View view) {
                     MovieDatabaseHelper movieDatabaseHelper = new MovieDatabaseHelper(getActivity());
                     SQLiteDatabase db = movieDatabaseHelper.getWritableDatabase();
-                    db.delete(MovieSchema.DATABASE_NAME, MovieSchema._ID, new String[]{Integer.toString(movie.getId())});
+                    db.delete(MovieSchema.TABLE_NAME, MovieSchema.COLUMN_NAME_MOVIE_ID + "=" + Integer.toString(movie.getId()), null);
                     Toast.makeText(getActivity(), "Removed from favorites", Toast.LENGTH_SHORT).show();
                     checkFavorites();
                 }
@@ -108,10 +111,10 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
                     MovieDatabaseHelper movieDatabaseHelper = new MovieDatabaseHelper(getActivity());
                     SQLiteDatabase db = movieDatabaseHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
-                    values.put(MovieSchema._ID, movie.getId());
+                    values.put(MovieSchema.COLUMN_NAME_MOVIE_ID, movie.getId());
                     values.put(MovieSchema.COLUMN_NAME_ADULT, movie.isAdult());
                     values.put(MovieSchema.COLUMN_NAME_BACKDROP, movie.getBackdrop_path());
-                    values.put(MovieSchema.COLUMN_NAME_GENRE, movie.getGenre_ids().toString());
+                    values.put(MovieSchema.COLUMN_NAME_GENRE, Arrays.toString(movie.getGenre_ids()));
                     values.put(MovieSchema.COLUMN_NAME_DATE, movie.getRelease_date());
                     values.put(MovieSchema.COLUMN_NAME_LANGUAGE, movie.getOriginal_language());
                     values.put(MovieSchema.COLUMN_NAME_ORIGINAL_TITLE, movie.getOriginal_title());
@@ -122,7 +125,7 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
                     values.put(MovieSchema.COLUMN_NAME_VIDEO, movie.isVideo());
                     values.put(MovieSchema.COLUMN_NAME_VOTE_AVG, movie.getVote_average());
                     values.put(MovieSchema.COLUMN_NAME_VOTE_COUNT, movie.getVote_count());
-                    db.insert(MovieSchema.DATABASE_NAME, null, values);
+                    db.insert(MovieSchema.TABLE_NAME, null, values);
                     Toast.makeText(getActivity(), "Added to favorites", Toast.LENGTH_SHORT).show();
                     checkFavorites();
                 }

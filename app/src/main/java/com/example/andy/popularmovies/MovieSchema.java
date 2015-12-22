@@ -1,5 +1,6 @@
 package com.example.andy.popularmovies;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -8,6 +9,7 @@ import android.provider.BaseColumns;
 public final class MovieSchema {
 
     public static  final int DATABASE_VERSION = 1;
+    public static final String AUTHORITY = "com.example.andy.popularmovies.movieprovider/";
     public static final String DATABASE_NAME = "Movies.db";
     private static final String COMMA = ",";
     private static final String TEXT_TYPE = " TEXT";
@@ -15,6 +17,7 @@ public final class MovieSchema {
     private static final String REAL_TYPE = " REAL";
     public static final String TABLE_NAME = "favoriteMovies";
     public static final String _ID = "_id";
+    public static final String COLUMN_NAME_MOVIE_ID = "movieId";
     public static final String COLUMN_NAME_ADULT = "isAdult";
     public static final String COLUMN_NAME_BACKDROP = "backdrop";
     public static final String COLUMN_NAME_GENRE = "genre";
@@ -28,6 +31,7 @@ public final class MovieSchema {
     public static final String COLUMN_NAME_VIDEO = "hasVideo";
     public static final String COLUMN_NAME_VOTE_AVG = "voteAvg";
     public static final String COLUMN_NAME_VOTE_COUNT = "voteCount";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     private MovieSchema() {}
 
@@ -36,6 +40,7 @@ public final class MovieSchema {
         public static final String CREATE_TABLE = "CREATE TABLE " +
                 TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY," +
+                COLUMN_NAME_MOVIE_ID + INTEGER_TYPE + COMMA +
                 COLUMN_NAME_ADULT + INTEGER_TYPE + COMMA +
                 COLUMN_NAME_BACKDROP + TEXT_TYPE + COMMA +
                 COLUMN_NAME_GENRE + TEXT_TYPE + COMMA +

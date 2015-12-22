@@ -15,6 +15,7 @@
     <string name="poster_description">movie poster image</string>
     <string name="shared_poster_image">sharedPosterImage</string>
     <string name="no_movies">Movie Information Not Available</string>
+    <string name="no_favorites">No favorited movies found</string>
     <string name="failed_retrofit">Failed to get movie information</string>
-    <string name="provider_uri">com.example.andy.popularmovies.movieprovider</string>
+    <string name="provider_authority">com.example.andy.popularmovies.movieprovider</string>
 </resources>

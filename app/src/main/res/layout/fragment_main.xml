@@ -26,4 +26,5 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:textSize="@dimen/font_size_14"
         android:textColor="@color/white"/>
+
 </FrameLayout>

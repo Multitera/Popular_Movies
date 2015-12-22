@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andy.popularmovies.model.Movie;
@@ -123,7 +124,7 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         switch (i) {
             case LOADER:
-                return new CursorLoader(getActivity(), Uri.parse(getString(R.string.provider_uri)), null, null, null, null);
+                return new CursorLoader(getActivity(), Uri.parse("content://" + getString(R.string.provider_authority) + "/" + MovieSchema.TABLE_NAME), null, null, null, null);
             default:
                 return null;
         }
@@ -138,11 +139,11 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
                     Boolean isAdult = cursor.getLong(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_ADULT)) == 1;
                     String backdrop = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_BACKDROP));
                     String genreString = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_GENRE));
-                    String[] genreArray = genreString.replaceAll("[\\p{z}\\s]+", "").split(", ");
+                    String[] genreArray = genreString.replace("[", "").replace("]", "").split(", ");
                     int[] genreIds = new int[genreArray.length];
                     for (int i = 0; i < genreArray.length; i++)
                         genreIds[i] = Integer.parseInt(genreArray[i]);
-                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema._ID));
+                    int id = cursor.getInt(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_MOVIE_ID));
                     String original_language = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_LANGUAGE));
                     String original_title = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_ORIGINAL_TITLE));
                     String overview = cursor.getString(cursor.getColumnIndexOrThrow(MovieSchema.COLUMN_NAME_OVERVIEW));
@@ -160,9 +161,11 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
             }
         }
         if (movies.isEmpty()) {
-
-        } else
-            displayMoviePosters();
+            TextView textView = (TextView) getActivity().findViewById(R.id.empty_grid);
+            textView.setText(R.string.no_favorites);
+            gridView.setEmptyView(textView);
+        }
+        displayMoviePosters();
     }
 
     @Override
