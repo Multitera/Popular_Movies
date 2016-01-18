@@ -25,6 +25,7 @@ import com.example.andy.popularmovies.service.MovieResultsServiceHelper;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -47,6 +48,7 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
 
     public interface FragmentMessenger {
         void gridItemClicked(View sharedImage, Movie movie);
+
         void moviesDisplayed(Movie movie);
     }
 
@@ -135,7 +137,10 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        this.movies.clear();
+        if (this.movies == null)
+            this.movies = new ArrayList<>();
+        else
+            this.movies.clear();
         if (cursor != null) {
             try {
                 while (cursor.moveToNext()) {

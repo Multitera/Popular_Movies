@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     }
 
     private void changeSearchType(int searchID) {
-        MainActivityFragment fragment = (MainActivityFragment) getFragmentManager().findFragmentById(R.id.fragment);
+        MainActivityFragment fragment = (MainActivityFragment) getFragmentManager().findFragmentById(R.id.fragment_main);
         fragment.queryMoviePosters(searchID);
     }
 
