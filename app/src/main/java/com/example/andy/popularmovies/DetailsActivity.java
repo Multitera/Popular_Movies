@@ -7,10 +7,20 @@ import android.view.MenuItem;
 
 public class DetailsActivity extends Activity {
 
+    public static final String MOVIE_KEY = "movie";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        if (savedInstanceState == null) {
+            Bundle args = new Bundle();
+            args.putParcelable(MOVIE_KEY, getIntent().getParcelableExtra(MOVIE_KEY));
+            DetailsActivityFragment fragment = new DetailsActivityFragment();
+            fragment.setArguments(args);
+            getFragmentManager().beginTransaction().add(R.id.fragment, fragment).commit();
+        }
     }
 
 

@@ -51,7 +51,7 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_details, container, false);
-        movie = Parcels.unwrap(getActivity().getIntent().getParcelableExtra(MOVIE_KEY));
+        movie = Parcels.unwrap(getArguments().getParcelable(MOVIE_KEY));
         mMovieTitle = (TextView) rootView.findViewById(R.id.movieTitleText);
         mMovieTitle.setText(movie.getTitle());
         mRating = (TextView) rootView.findViewById(R.id.rating);

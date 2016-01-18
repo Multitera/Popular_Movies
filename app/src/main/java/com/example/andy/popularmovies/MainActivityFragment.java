@@ -1,14 +1,12 @@
 package com.example.andy.popularmovies;
 
-import android.app.ActivityOptions;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -45,6 +43,22 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
     private List<Movie> movies;
     private GridView gridView;
     private int searchType = -1;
+    FragmentMessenger messenger;
+
+    public interface FragmentMessenger {
+        void gridItemClicked(View sharedImage, Movie movie);
+        void moviesDisplayed(Movie movie);
+    }
+
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            messenger = (FragmentMessenger) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " does not implement FragmentMessenger");
+        }
+    }
 
     public MainActivityFragment() {
     }
@@ -59,7 +73,7 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
         gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                launchDetailsActivity(view, movies.get(i));
+                messenger.gridItemClicked(view, movies.get(i));
             }
         });
         if (savedInstanceState == null)
@@ -70,18 +84,6 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
             displayMoviePosters();
         }
         return view;
-    }
-
-    private void launchDetailsActivity(View sharedImage, Movie movie) {
-        Intent intent;
-        Parcelable parcelable = Parcels.wrap(movie);
-        intent = new Intent(this.getActivity(), DetailsActivity.class);
-        intent.putExtra(MOVIE_KEY, parcelable);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this.getActivity(), sharedImage, getString(R.string.shared_poster_image));
-            startActivity(intent, options.toBundle());
-        } else
-            startActivity(intent);
     }
 
     public void queryMoviePosters(int searchType) {
@@ -96,6 +98,7 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
 
     private void displayMoviePosters() {
         gridView.setAdapter(new MovieAdapter(this.getActivity(), movies));
+        messenger.moviesDisplayed(movies.get(0));
     }
 
     @Override

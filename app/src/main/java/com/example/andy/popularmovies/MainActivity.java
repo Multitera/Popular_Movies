@@ -1,18 +1,32 @@
 package com.example.andy.popularmovies;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.example.andy.popularmovies.model.Movie;
+
+import org.parceler.Parcels;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.FragmentMessenger {
+    private static final String DETAIL_FRAGMENT_TAG = "DF";
+    public static final String MOVIE_KEY = "movie";
+
+    private boolean mTwoPane;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mTwoPane = findViewById(R.id.fragment_details) != null;
     }
 
 
@@ -47,8 +61,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void changeSearchType (int searchID) {
+    private void changeSearchType(int searchID) {
         MainActivityFragment fragment = (MainActivityFragment) getFragmentManager().findFragmentById(R.id.fragment);
-                fragment.queryMoviePosters(searchID);
+        fragment.queryMoviePosters(searchID);
+    }
+
+    @Override
+    public void gridItemClicked(View sharedImage, Movie movie) {
+        Parcelable parcelable = Parcels.wrap(movie);
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(MOVIE_KEY, parcelable);
+            DetailsActivityFragment fragment = new DetailsActivityFragment();
+            fragment.setArguments(args);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_details, fragment, DETAIL_FRAGMENT_TAG).commit();
+        } else {
+            Intent intent;
+            intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra(MOVIE_KEY, parcelable);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, sharedImage, getString(R.string.shared_poster_image));
+                startActivity(intent, options.toBundle());
+            } else
+                startActivity(intent);
+        }
+    }
+
+    @Override
+    public void moviesDisplayed(Movie movie) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            Parcelable parcelable = Parcels.wrap(movie);
+            args.putParcelable(MOVIE_KEY, parcelable);
+            DetailsActivityFragment fragment = new DetailsActivityFragment();
+            fragment.setArguments(args);
+            getFragmentManager().beginTransaction().add(R.id.fragment_details, fragment, DETAIL_FRAGMENT_TAG).commit();
+        }
     }
 }
