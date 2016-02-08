@@ -1,8 +1,8 @@
 package com.example.andy.popularmovies;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.andy.popularmovies.model.Movie;
-import com.example.andy.popularmovies.model.Results;
+import com.example.andy.popularmovies.model.MovieResults;
 import com.example.andy.popularmovies.service.MovieResultsServiceHelper;
 
 import org.parceler.Parcels;
@@ -36,7 +36,7 @@ import retrofit.client.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements Callback<Results>, LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivityFragment extends Fragment implements Callback<MovieResults>, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String SEARCH_TYPE_KEY = "searchType";
     private static final String MOVIE_KEY = "movie";
@@ -52,13 +52,13 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
         void moviesDisplayed(Movie movie);
     }
 
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         try {
-            messenger = (FragmentMessenger) activity;
+            messenger = (FragmentMessenger) getActivity();
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " does not implement FragmentMessenger");
+            throw new ClassCastException(getActivity().toString() + " does not implement FragmentMessenger");
         }
     }
 
@@ -104,9 +104,9 @@ public class MainActivityFragment extends Fragment implements Callback<Results>,
     }
 
     @Override
-    public void success(Results results, Response response) {
-        if (results.getResults() != null) {
-            this.movies = results.getResults();
+    public void success(MovieResults movieResults, Response response) {
+        if (movieResults.getResults() != null) {
+            this.movies = movieResults.getResults();
             displayMoviePosters();
         }
     }

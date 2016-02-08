@@ -18,4 +18,6 @@
     <string name="no_favorites">No favorited movies found</string>
     <string name="failed_retrofit">Failed to get movie information</string>
     <string name="provider_authority">com.example.andy.popularmovies.movieprovider</string>
+    <string name="video_header">Videos:</string>
+    <string name="review_header">Reviews:</string>
 </resources>

@@ -4,11 +4,15 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +21,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.andy.popularmovies.model.ClipInfo;
+import com.example.andy.popularmovies.model.ClipInfoResults;
 import com.example.andy.popularmovies.model.Movie;
+import com.example.andy.popularmovies.model.Review;
+import com.example.andy.popularmovies.model.ReviewResults;
 import com.example.andy.popularmovies.service.MovieDatabaseHelper;
+import com.example.andy.popularmovies.service.MovieResultsServiceHelper;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
 import java.util.Arrays;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailsActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DetailsActivityFragment extends Fragment implements Callback, LoaderManager.LoaderCallbacks<Cursor>, MovieDetailsAdapter.AdapterInterface {
 
     public static final String MOVIE_KEY = "movie";
+    private static final String YOUTUBE_URI = "https://www.youtube.com/watch?v=";
     private static final int LOADER = 0;
+    private List<Review> reviews;
+    private List<ClipInfo> clipInfoList;
+    private RecyclerView mRecyclerView;
+    private MovieDetailsAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
     private TextView mMovieTitle;
     private TextView mRating;
     private TextView mDateReleased;
@@ -63,6 +83,14 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
         mPoster = (ImageView) rootView.findViewById(R.id.posterImage);
         Picasso.with(getActivity()).load(getActivity().getString(R.string.poster_url) + movie.getPoster_path()).into(mPoster);
         mFavorite = (Button) rootView.findViewById(R.id.favoriteButton);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new MovieDetailsAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+        getLoaderManager().initLoader(LOADER, null, this);
+        MovieResultsServiceHelper.queryClipInfo(getActivity(), Integer.toString(movie.getId()), this);
+        MovieResultsServiceHelper.queryReviews(getActivity(), Integer.toString(movie.getId()), this);
         checkFavorites();
         return rootView;
     }
@@ -72,7 +100,7 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
         switch (i) {
             case LOADER:
                 return new CursorLoader(getActivity(),
-                        Uri.parse("content://" + getString(R.string.provider_authority) + "/"+ MovieSchema.TABLE_NAME),
+                        Uri.parse("content://" + getString(R.string.provider_authority) + "/" + MovieSchema.TABLE_NAME),
                         new String[]{MovieSchema.COLUMN_NAME_MOVIE_ID},
                         MovieSchema.COLUMN_NAME_MOVIE_ID + "=?",
                         new String[]{String.valueOf(movie.getId())},
@@ -88,7 +116,7 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
         if (cursor != null) {
             try {
                 if (cursor.getCount() != 0)
-                isFavorite = true;
+                    isFavorite = true;
             } finally {
                 cursor.close();
             }
@@ -137,5 +165,39 @@ public class DetailsActivityFragment extends Fragment implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void success(Object extra, Response response) {
+        if (extra instanceof ClipInfoResults) {
+            ClipInfoResults clipInfoResults = (ClipInfoResults) extra;
+            if (clipInfoResults.getResults() != null) {
+                this.clipInfoList = clipInfoResults.getResults();
+                mAdapter.addClipInfoList(clipInfoList);
+                if (reviews != null) {
+                    mAdapter.addReviews(reviews);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        } else if (extra instanceof ReviewResults) {
+            ReviewResults reviewResults = (ReviewResults) extra;
+            if (reviewResults.getResults() != null) {
+                this.reviews = reviewResults.getResults();
+                if (clipInfoList != null) {
+                    mAdapter.addReviews(reviews);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+        Log.e(MainActivityFragment.class.getSimpleName(), error.getMessage());
+    }
+
+    @Override
+    public void ClipViewCardClick(int position) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_URI + clipInfoList.get(position).getKey())));
     }
 }
