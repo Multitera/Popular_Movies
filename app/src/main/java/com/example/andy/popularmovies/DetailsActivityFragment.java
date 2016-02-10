@@ -3,6 +3,7 @@ package com.example.andy.popularmovies;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -51,6 +52,21 @@ public class DetailsActivityFragment extends Fragment implements Callback, Loade
     private MovieDetailsAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Movie movie;
+    FragmentMessenger messenger;
+
+    public interface FragmentMessenger {
+        void setShareIntent(String trailerURL);
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            messenger = (FragmentMessenger) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " does not implement FragmentMessenger");
+        }
+    }
 
     public DetailsActivityFragment() {
     }
@@ -117,6 +133,7 @@ public class DetailsActivityFragment extends Fragment implements Callback, Loade
             ClipInfoResults clipInfoResults = (ClipInfoResults) extra;
             if (clipInfoResults.getResults() != null) {
                 this.clipInfoList = clipInfoResults.getResults();
+                messenger.setShareIntent(YOUTUBE_URI + clipInfoList.get(0).getKey());
                 mAdapter.addClipInfoList(clipInfoList);
                 if (reviews != null) {
                     mAdapter.addReviews(reviews);

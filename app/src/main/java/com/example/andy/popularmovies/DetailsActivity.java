@@ -1,14 +1,18 @@
 package com.example.andy.popularmovies;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.support.v7.widget.ShareActionProvider;
 
-public class DetailsActivity extends Activity {
+public class DetailsActivity extends AppCompatActivity implements DetailsActivityFragment.FragmentMessenger {
 
     public static final String MOVIE_KEY = "movie";
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,8 @@ public class DetailsActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
+        MenuItem item = menu.findItem(R.id.share_trailer);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         return true;
     }
 
@@ -48,5 +54,15 @@ public class DetailsActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setShareIntent(String trailerURL) {
+        if (mShareActionProvider != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, trailerURL);
+            mShareActionProvider.setShareIntent(intent);
+        }
     }
 }

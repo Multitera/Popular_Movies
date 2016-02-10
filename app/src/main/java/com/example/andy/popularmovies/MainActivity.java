@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +17,10 @@ import com.example.andy.popularmovies.model.Movie;
 import org.parceler.Parcels;
 
 
-public class MainActivity extends AppCompatActivity implements MainActivityFragment.FragmentMessenger {
+public class MainActivity extends AppCompatActivity implements MainActivityFragment.FragmentMessenger, DetailsActivityFragment.FragmentMessenger {
     private static final String DETAIL_FRAGMENT_TAG = "DF";
     public static final String MOVIE_KEY = "movie";
+    private ShareActionProvider mShareActionProvider;
 
     private boolean mTwoPane;
 
@@ -34,6 +37,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (menu.findItem(R.id.share_trailer) != null) {
+            MenuItem item = menu.findItem(R.id.share_trailer);
+            mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        }
         return true;
     }
 
@@ -53,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                 return true;
             case R.id.favorites:
                 changeSearchType(R.string.sort_favorites);
+                return true;
+            case R.id.share_trailer:
                 return true;
             case R.id.action_settings:
                 return true;
@@ -96,6 +105,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             DetailsActivityFragment fragment = new DetailsActivityFragment();
             fragment.setArguments(args);
             getFragmentManager().beginTransaction().add(R.id.fragment_details, fragment, DETAIL_FRAGMENT_TAG).commit();
+        }
+    }
+
+    @Override
+    public void setShareIntent(String trailerURL) {
+        if (mShareActionProvider != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, trailerURL);
+            mShareActionProvider.setShareIntent(intent);
         }
     }
 }

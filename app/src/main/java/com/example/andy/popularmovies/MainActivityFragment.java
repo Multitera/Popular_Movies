@@ -48,7 +48,6 @@ public class MainActivityFragment extends Fragment implements Callback<MovieResu
 
     public interface FragmentMessenger {
         void gridItemClicked(View sharedImage, Movie movie);
-
         void moviesDisplayed(Movie movie);
     }
 

@@ -8,6 +8,7 @@
     <string name="poster_url">http://image.tmdb.org/t/p/w500/</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="search_by">Search by</string>
+    <string name="share_trailer">Share Trailer</string>
     <string name="popularity">Popularity</string>
     <string name="rating">Rating</string>
     <string name="favorite_button">Favorite</string>
