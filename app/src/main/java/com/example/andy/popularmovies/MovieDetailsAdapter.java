@@ -38,7 +38,9 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<MovieDetailsAdapte
 
     public interface AdapterInterface {
         public void ClipViewCardClick(int position);
+
         public void FavoriteButtonPressed(boolean isFavorite);
+
         public void StartTransition();
     }
 
@@ -102,7 +104,7 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<MovieDetailsAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    adapterInterface.ClipViewCardClick(getLayoutPosition());
+                    adapterInterface.ClipViewCardClick(getLayoutPosition() - CLIP);
                 }
             });
         }
