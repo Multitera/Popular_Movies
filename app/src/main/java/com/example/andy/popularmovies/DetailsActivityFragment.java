@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,7 +69,6 @@ public class DetailsActivityFragment extends Fragment implements Callback, Loade
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MovieDetailsAdapter(this.getActivity(), this, movie);
         mRecyclerView.setAdapter(mAdapter);
-        getLoaderManager().initLoader(LOADER, null, this);
         MovieResultsServiceHelper.queryClipInfo(getActivity(), Integer.toString(movie.getId()), this);
         MovieResultsServiceHelper.queryReviews(getActivity(), Integer.toString(movie.getId()), this);
         checkFavorites();
@@ -177,5 +177,11 @@ public class DetailsActivityFragment extends Fragment implements Callback, Loade
             checkedFavorites = false;
             checkFavorites();
         }
+    }
+
+    @Override
+    public void StartTransition() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getActivity().startPostponedEnterTransition();
     }
 }

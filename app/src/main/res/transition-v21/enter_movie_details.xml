@@ -1,29 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
-    <slide
+    <explode
         android:duration="1000"
-        android:interpolator="@android:interpolator/fast_out_slow_in"
-        android:slideEdge="bottom">
+        android:interpolator="@android:interpolator/fast_out_slow_in">
         <targets>
-            <target android:targetId="@+id/details_bottom" />
-        </targets>
-    </slide>
-    <slide
-        android:duration="1000"
-        android:interpolator="@android:interpolator/fast_out_slow_in"
-        android:slideEdge="right">
-        <targets>
+            <target android:targetId="@+id/movieTitleText" />
             <target android:targetId="@+id/dateReleasedText" />
             <target android:targetId="@+id/rating" />
             <target android:targetId="@+id/favoriteButton" />
+            <target android:targetId="@+id/overviewText" />
+            <target android:targetId="@+id/list_header" />
+            <target android:targetId="@+id/list_item_video" />
+            <target android:targetId="@+id/list_item_review" />
         </targets>
-    </slide>
-    <slide
-        android:duration="1000"
-        android:interpolator="@android:interpolator/fast_out_slow_in"
-        android:slideEdge="top">
-        <targets>
-            <target android:targetId="@+id/movieTitleText" />
-        </targets>
-    </slide>
+    </explode>
 </transitionSet>

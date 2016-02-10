@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,8 +38,8 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<MovieDetailsAdapte
 
     public interface AdapterInterface {
         public void ClipViewCardClick(int position);
-
         public void FavoriteButtonPressed(boolean isFavorite);
+        public void StartTransition();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +64,14 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<MovieDetailsAdapte
             dateReleased = (TextView) itemView.findViewById(R.id.dateReleasedText);
             overview = (TextView) itemView.findViewById(R.id.overviewText);
             poster = (ImageView) itemView.findViewById(R.id.posterImage);
-            Picasso.with(context).load(context.getString(R.string.poster_url) + movie.getPoster_path()).into(poster);
+            poster.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    poster.getViewTreeObserver().removeOnPreDrawListener(this);
+                    adapterInterface.StartTransition();
+                    return true;
+                }
+            });
             favorite = (Button) itemView.findViewById(R.id.favoriteButton);
             favorite.setOnClickListener(new View.OnClickListener() {
                 @Override
