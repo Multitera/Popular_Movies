@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Andy on 8/4/2015.
  */
 public class MovieAdapter extends ArrayAdapter<Movie> {
-    public MovieAdapter (Activity context, List<Movie> movies) {
+    public MovieAdapter(Activity context, List<Movie> movies) {
         super(context, 0, movies);
     }
 
@@ -25,12 +25,14 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     public View getView(int position, View convertView, ViewGroup parent) {
         Movie movie = getItem(position);
         Context context = getContext();
-        ImageView imageView = new ImageView(context);
+        if (convertView == null) {
+            convertView = new ImageView(context);
+            convertView.setId(R.id.posterImage);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                convertView.setTransitionName(context.getString(R.string.shared_poster_image));
+        }
         String posterPath = context.getString(R.string.poster_url) + movie.getPoster_path();
-        Picasso.with(context).load(posterPath).into(imageView);
-        imageView.setId(R.id.posterImage);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            imageView.setTransitionName(context.getString(R.string.shared_poster_image));
-        return imageView;
+        Picasso.with(context).load(posterPath).into((ImageView) convertView);
+        return convertView;
     }
 }
